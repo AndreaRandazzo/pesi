@@ -47,8 +47,13 @@ button{font:inherit;cursor:pointer}
 .sugg{background:#2a2414;border:1px solid #4a3d14;color:#f2d27a;border-radius:10px;padding:8px 10px;font-size:14px;margin-bottom:10px}
 .sugg.up{background:#14291f;border-color:#1f4a35;color:#8fe0b6}
 .note{font-size:13px;color:var(--muted);font-style:italic;margin-bottom:8px}
-.set{display:grid;grid-template-columns:22px 1fr 78px 46px;gap:6px;align-items:center;margin-bottom:6px}
-.set .n{color:var(--muted);font-size:13px;text-align:center}
+.set{display:grid;grid-template-columns:44px 1fr 64px 44px;gap:6px;align-items:center;margin-bottom:6px}
+.set .n{height:44px;padding:0;border:0;border-radius:10px;background:none;color:var(--muted);font-size:13px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15}
+.set.done .n{background:var(--card2)}
+.set .n .r{color:var(--accent);font-weight:700;font-size:12px}
+.rirrow{display:flex;gap:6px;align-items:center;margin:0 0 8px 50px}
+.rirrow .chip{flex:1;min-height:44px;padding:0}
 .kg{display:flex;align-items:center;background:var(--card2);border-radius:10px;border:1px solid var(--line)}
 .kg button{background:none;border:0;color:var(--text);width:38px;height:44px;font-size:20px}
 .kg input,.reps input{width:100%;min-width:0;background:none;border:0;color:var(--text);text-align:center;font-size:17px;font-weight:600;height:44px}
@@ -81,6 +86,27 @@ svg.spark{width:100%;height:120px;display:block}
   border:1px solid var(--line);padding:10px 14px;border-radius:10px;z-index:9;font-size:14px;display:none}
 .toast.show{display:block}
 body.ton main{padding-bottom:100px}
+.bkban{display:flex;gap:10px;align-items:center;justify-content:space-between;background:#2a2414;border:1px solid #4a3d14;color:#f2d27a}
+.bwin{flex:1;min-width:0;height:48px;background:var(--card2);color:var(--text);border:1px solid var(--line);border-radius:10px;
+  padding:0 12px;font:inherit;font-size:18px;font-weight:600}
+.bwin:focus{border-color:var(--accent)}
+.bwbtn{height:48px;min-width:88px}
+.bwlist{margin-top:10px}
+.bwlist summary{padding:12px 0;cursor:pointer}
+.bwrow{justify-content:space-between;padding:4px 0;border-top:1px solid var(--line)}
+.bwrow span{flex:1}
+.bwrow .btn{min-height:44px}
+.vol{padding:7px 0}
+.vol-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:15px}
+.vol-h b{font-size:17px}
+.band{font-size:11px;font-weight:700;text-transform:uppercase;padding:2px 6px;border-radius:6px;margin-left:2px}
+.band.lo{background:#3a2418;color:var(--warn)}
+.band.ok{background:#14291f;color:var(--ok)}
+.band.hi{background:#2a2414;color:var(--accent)}
+.bar{position:relative;height:8px;background:var(--card2);border-radius:4px;margin-top:4px;overflow:hidden}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px}
+.bar i.lo{background:var(--warn)} .bar i.ok{background:var(--ok)} .bar i.hi{background:var(--accent)}
+.bar s{position:absolute;top:0;bottom:0;width:1px;background:var(--muted);opacity:.6}
 h2{font-size:15px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:18px 0 8px}
 </style>
 </head>
@@ -109,41 +135,68 @@ const DEFAULT_PROGRAM = {
   name: "Scheda massa",
   sessions: [
     { id: "UA", name: "Upper A", exercises: [
-      { name: "Panca piana con bilanciere", sets: 4, reps: "5-8", rest: 150, step: 2.5, start: 47.5 },
-      { name: "Rematore con bilanciere", sets: 4, reps: "6-8", rest: 150, step: 2.5 },
-      { name: "Lento avanti con manubri, seduto", sets: 3, reps: "8-10", rest: 120, step: 2 },
-      { name: "Lat machine presa larga", sets: 3, reps: "8-12", rest: 90, step: 2.5 },
-      { name: "Chest press (o croci ai cavi bassi)", sets: 3, reps: "10-12", rest: 90, step: 2.5 },
-      { name: "Alzate laterali", sets: 3, reps: "12-15", rest: 60, step: 1, start: 7.5 },
-      { name: "Curl con bilanciere EZ", sets: 3, reps: "8-10", rest: 75, step: 2.5 },
-      { name: "French press con manubri", sets: 3, reps: "10-12", rest: 75, step: 2 }
+      { name: "Panca piana con bilanciere", sets: 4, reps: "5-8", rest: 150, step: 2.5, start: 47.5, rir: "1-2",
+        muscles: { direct: ["petto"], indirect: ["tricipiti", "deltoide anteriore"] } },
+      { name: "Rematore con bilanciere", sets: 4, reps: "6-8", rest: 150, step: 2.5, rir: "1-2",
+        muscles: { direct: ["dorso"], indirect: ["bicipiti", "deltoide posteriore"] } },
+      { name: "Lento avanti con manubri, seduto", sets: 3, reps: "8-10", rest: 120, step: 2, rir: "1-2",
+        muscles: { direct: ["deltoide anteriore"], indirect: ["tricipiti", "deltoide laterale"] } },
+      { name: "Lat machine presa larga", sets: 3, reps: "8-12", rest: 90, step: 2.5, rir: "0-1",
+        muscles: { direct: ["dorso"], indirect: ["bicipiti"] } },
+      { name: "Chest press (o croci ai cavi bassi)", sets: 3, reps: "10-12", rest: 90, step: 2.5, rir: "0-1",
+        muscles: { direct: ["petto"], indirect: ["tricipiti", "deltoide anteriore"] } },
+      { name: "Alzate laterali", sets: 3, reps: "12-15", rest: 60, step: 1, start: 7.5, rir: "0-1",
+        muscles: { direct: ["deltoide laterale"], indirect: [] } },
+      { name: "Curl con bilanciere EZ", sets: 3, reps: "8-10", rest: 75, step: 2.5, rir: "0-1",
+        muscles: { direct: ["bicipiti"], indirect: [] } },
+      { name: "French press con manubri", sets: 3, reps: "10-12", rest: 75, step: 2, rir: "0-1",
+        muscles: { direct: ["tricipiti"], indirect: [] } }
     ]},
     { id: "LA", name: "Lower A", exercises: [
-      { name: "Squat con bilanciere (o al multipower)", sets: 4, reps: "5-8", rest: 180, step: 5 },
-      { name: "Pressa 45°", sets: 3, reps: "10-12", rest: 120, step: 10 },
-      { name: "Stacco rumeno", sets: 3, reps: "8-10", rest: 120, step: 5 },
-      { name: "Leg curl", sets: 3, reps: "10-12", rest: 75, step: 2.5 },
-      { name: "Calf in piedi", sets: 4, reps: "10-15", rest: 60, step: 5, note: "Due secondi di allungamento in basso, niente rimbalzi." },
-      { name: "Crunch inverso", sets: 3, reps: "12-15", rest: 60, step: 0 }
+      { name: "Squat con bilanciere (o al multipower)", sets: 4, reps: "5-8", rest: 180, step: 5, rir: "1-2",
+        muscles: { direct: ["quadricipiti"], indirect: ["glutei"] } },
+      { name: "Pressa 45°", sets: 3, reps: "10-12", rest: 120, step: 10, rir: "1-2",
+        muscles: { direct: ["quadricipiti"], indirect: ["glutei"] } },
+      { name: "Stacco rumeno", sets: 3, reps: "8-10", rest: 120, step: 5, rir: "1-2",
+        muscles: { direct: ["femorali"], indirect: ["glutei"] } },
+      { name: "Leg curl", sets: 3, reps: "10-12", rest: 75, step: 2.5, rir: "0-1",
+        muscles: { direct: ["femorali"], indirect: [] } },
+      { name: "Calf in piedi", sets: 4, reps: "10-15", rest: 60, step: 5, note: "Due secondi di allungamento in basso, niente rimbalzi.", rir: "0-1",
+        muscles: { direct: ["polpacci"], indirect: [] } },
+      { name: "Crunch inverso", sets: 3, reps: "12-15", rest: 60, step: 0, rir: "0-1",
+        muscles: { direct: ["addome"], indirect: [] } }
     ]},
     { id: "UB", name: "Upper B", exercises: [
       { name: "Trazioni alla sbarra", sets: 4, reps: "6-10", rest: 150, step: 2.5, start: 0,
-        note: "kg = zavorra. 0 = corpo libero, negativo = assistenza (es. -20)." },
+        note: "kg = zavorra. 0 = corpo libero, negativo = assistenza (es. -20).", rir: "1-2",
+        muscles: { direct: ["dorso"], indirect: ["bicipiti"] } },
       { name: "Panca inclinata con manubri", sets: 4, reps: "8-10", rest: 120, step: 2.5, start: 15,
-        note: "Una serie di avvicinamento leggera prima di iniziare." },
-      { name: "Pulley basso presa neutra", sets: 3, reps: "10-12", rest: 90, step: 5, start: 50 },
-      { name: "Croci ai cavi alti", sets: 3, reps: "12-15", rest: 75, step: 2.5, start: 17.5 },
-      { name: "Alzate laterali", sets: 3, reps: "12-15", rest: 60, step: 1, start: 7.5 },
-      { name: "Push down alla corda", sets: 3, reps: "12-15", rest: 60, step: 2.5, start: 35 },
-      { name: "Curl a martello", sets: 3, reps: "10-12", rest: 60, step: 2, start: 10 }
+        note: "Una serie di avvicinamento leggera prima di iniziare.", rir: "1-2",
+        muscles: { direct: ["petto"], indirect: ["tricipiti", "deltoide anteriore"] } },
+      { name: "Pulley basso presa neutra", sets: 3, reps: "10-12", rest: 90, step: 5, start: 50, rir: "0-1",
+        muscles: { direct: ["dorso"], indirect: ["bicipiti", "deltoide posteriore"] } },
+      { name: "Croci ai cavi alti", sets: 3, reps: "12-15", rest: 75, step: 2.5, start: 17.5, rir: "0-1",
+        muscles: { direct: ["petto"], indirect: [] } },
+      { name: "Alzate laterali", sets: 3, reps: "12-15", rest: 60, step: 1, start: 7.5, rir: "0-1",
+        muscles: { direct: ["deltoide laterale"], indirect: [] } },
+      { name: "Push down alla corda", sets: 3, reps: "12-15", rest: 60, step: 2.5, start: 35, rir: "0-1",
+        muscles: { direct: ["tricipiti"], indirect: [] } },
+      { name: "Curl a martello", sets: 3, reps: "10-12", rest: 60, step: 2, start: 10, rir: "0-1",
+        muscles: { direct: ["bicipiti"], indirect: [] } }
     ]},
     { id: "LB", name: "Lower B", exercises: [
-      { name: "Stacco rumeno con bilanciere", sets: 4, reps: "6-8", rest: 180, step: 5 },
-      { name: "Affondi camminati (o split squat bulgaro)", sets: 3, reps: "8-10", rest: 120, step: 2, note: "Ripetizioni per gamba." },
-      { name: "Leg extension", sets: 3, reps: "12-15", rest: 75, step: 2.5 },
-      { name: "Leg curl seduto", sets: 4, reps: "8-12", rest: 90, step: 2.5 },
-      { name: "Calf seduto", sets: 4, reps: "12-20", rest: 60, step: 5 },
-      { name: "Plank o crunch alla macchina", sets: 3, reps: "15", rest: 60, step: 0 }
+      { name: "Stacco rumeno con bilanciere", sets: 4, reps: "6-8", rest: 180, step: 5, rir: "1-2",
+        muscles: { direct: ["femorali"], indirect: ["glutei"] } },
+      { name: "Affondi camminati (o split squat bulgaro)", sets: 3, reps: "8-10", rest: 120, step: 2, note: "Ripetizioni per gamba.", rir: "1-2",
+        muscles: { direct: ["quadricipiti"], indirect: ["glutei"] } },
+      { name: "Leg extension", sets: 3, reps: "12-15", rest: 75, step: 2.5, rir: "0-1",
+        muscles: { direct: ["quadricipiti"], indirect: [] } },
+      { name: "Leg curl seduto", sets: 4, reps: "8-12", rest: 90, step: 2.5, rir: "0-1",
+        muscles: { direct: ["femorali"], indirect: [] } },
+      { name: "Calf seduto", sets: 4, reps: "12-20", rest: 60, step: 5, rir: "0-1",
+        muscles: { direct: ["polpacci"], indirect: [] } },
+      { name: "Plank o crunch alla macchina", sets: 3, reps: "15", rest: 60, step: 0, rir: "0-1",
+        muscles: { direct: ["addome"], indirect: [] } }
     ]}
   ]
 };
@@ -152,9 +205,31 @@ let db = load();
 function load(){
   try{
     const raw = localStorage.getItem(KEY);
-    if(raw){ const d = JSON.parse(raw); if(d && d.program && Array.isArray(d.log)) return d; }
+    if(raw){ const d = JSON.parse(raw); if(d && d.program && Array.isArray(d.log)){
+      const old = !(d.version >= 2);
+      // copia di sicurezza dei dati pre-migrazione, scritta una sola volta
+      if(old) try{ if(!localStorage.getItem(KEY + ".pre-v2")) localStorage.setItem(KEY + ".pre-v2", raw); }catch(e){}
+      migrate(d);
+      if(old) try{ localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){ console.error(e); }
+      return d;
+    } }
   }catch(e){ console.error(e); }
-  return { version:1, program: structuredClone(DEFAULT_PROGRAM), log: [], draft: null };
+  return migrate({ version:1, program: structuredClone(DEFAULT_PROGRAM), log: [], draft: null });
+}
+/* v1 → v2: peso corporeo, muscoli e obiettivo RIR sugli esercizi riconosciuti per nome.
+   Idempotente. Non tocca log né draft. */
+function migrate(d){
+  if(!Array.isArray(d.bodyweight)) d.bodyweight = [];
+  if(!(d.version >= 2)){
+    const defs = new Map(DEFAULT_PROGRAM.sessions.flatMap(s => s.exercises).map(e => [e.name, e]));
+    for(const s of d.program.sessions || []) for(const ex of s.exercises || []){
+      const def = defs.get(ex.name); if(!def) continue; // non riconosciuto: resta senza muscles
+      if(!ex.muscles) ex.muscles = structuredClone(def.muscles);
+      if(ex.rir == null) ex.rir = def.rir;
+    }
+    d.version = 2;
+  }
+  return d;
 }
 function save(){
   try{ localStorage.setItem(KEY, JSON.stringify(db)); }
@@ -172,6 +247,15 @@ const fmtDate = iso => new Date(iso).toLocaleDateString("it-IT",{weekday:"short"
 function range(r){ const m = String(r).match(/(\d+)\s*-\s*(\d+)/); if(m) return [+m[1], +m[2]]; const n = parseInt(r); return [n||0, n||0]; }
 function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("show"),2200); }
 const e1rm = (kg, reps) => kg * (1 + reps/30); // Epley
+const fmt1 = n => fmtKg(Math.round(n*10)/10);
+// RIR: 0..3 (3 = "3 o più"), null/assente = non indicato
+const rirLabel = v => v >= 3 ? "3+" : String(v);
+const fmtSet = s => `${fmtKg(s.kg)}×${s.reps}${s.rir != null ? ` @${rirLabel(s.rir)}` : ""}`;
+// giorni di calendario locali come "YYYY-MM-DD"
+const dayKey = d => { const x = new Date(d); return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`; };
+const keyDate = k => { const [y,m,d] = k.split("-").map(Number); return new Date(y, m-1, d); };
+const keyAdd = (k, n) => { const x = keyDate(k); x.setDate(x.getDate() + n); return dayKey(x); };
+const keyDiff = (a, b) => Math.round((keyDate(a) - keyDate(b)) / 864e5);
 
 /* Ultima esecuzione registrata di un esercizio (per nome, quindi vale anche tra sedute diverse) */
 function lastPerf(name){
@@ -185,7 +269,11 @@ function lastPerf(name){
 /* Doppia progressione:
    - tutte le serie al massimo del range con lo stesso carico → +step
    - altrimenti stesso carico, prova ad aggiungere ripetizioni
-   - se una serie scende sotto il minimo per 2 volte di fila → suggerisce di scalare */
+   - se una serie scende sotto il minimo per 2 volte di fila → suggerisce di scalare
+   Se l'ultima seduta ha il RIR sulle serie al carico massimo (media delle serie che lo hanno):
+   - range chiuso e RIR medio >= 3 → +2×step
+   - una serie sotto il minimo a RIR 0 → stesso carico (era cedimento vero)
+   - range non chiuso e RIR medio >= 3 → stesso carico, ma spingi di più */
 function suggest(ex){
   const [lo, hi] = range(ex.reps);
   const last = lastPerf(ex.name);
@@ -196,8 +284,15 @@ function suggest(ex){
   const topKg = Math.max(...last.sets.map(s => s.kg ?? 0));
   const atTop = last.sets.filter(s => (s.kg ?? 0) === topKg);
   const reps = last.sets.map(s => s.reps).join(", ");
+  const withRir = atTop.filter(s => s.rir != null);
+  const avgRir = withRir.length ? withRir.reduce((a,s) => a + s.rir, 0) / withRir.length : null;
+  const easy = avgRir != null && avgRir >= 3;
   const allHit = atTop.length >= ex.sets && atTop.every(s => s.reps >= hi);
   if(allHit && ex.step > 0){
+    if(easy){
+      const kg = topKg + 2*ex.step;
+      return { kg, text: `Ultima: ${fmtKg(topKg)} kg × ${reps}, RIR medio ${fmt1(avgRir)} → era facile, salto doppio. Sali a ${fmtKg(kg)} kg e riparti da ${lo}.`, up:true };
+    }
     const kg = topKg + ex.step;
     return { kg, text: `Ultima: ${fmtKg(topKg)} kg × ${reps} → range chiuso. Sali a ${fmtKg(kg)} kg e riparti da ${lo}.`, up:true };
   }
@@ -209,8 +304,13 @@ function suggest(ex){
       const kg = Math.max(0, topKg - ex.step);
       return { kg, text: `Due volte sotto ${lo} con ${fmtKg(topKg)} kg. Scendi a ${fmtKg(kg)} kg.`, up:false };
     }
-    return { kg: topKg, text: `Ultima: ${fmtKg(topKg)} kg × ${reps}. Stesso carico, punta ad almeno ${lo} su tutte.`, up:false };
+    if(atTop.some(s => s.reps < lo && s.rir === 0))
+      return { kg: topKg, text: `Ultima: ${fmtKg(topKg)} kg × ${reps}, sotto ${lo} a cedimento (RIR 0). Stesso carico, punta ad almeno ${lo} su tutte.`, up:false };
   }
+  if(easy)
+    return { kg: topKg, text: `Ultima: ${fmtKg(topKg)} kg × ${reps}, RIR medio ${fmt1(avgRir)}. Stesso carico, ma spingi di più: eri lontano dal cedimento.`, up:false };
+  if(below)
+    return { kg: topKg, text: `Ultima: ${fmtKg(topKg)} kg × ${reps}. Stesso carico, punta ad almeno ${lo} su tutte.`, up:false };
   return { kg: topKg, text: `Ultima: ${fmtKg(topKg)} kg × ${reps}. Stesso carico, +1 rip. dove puoi (obiettivo ${hi}).`, up:false };
 }
 function prevPerf(name, beforeDate){
@@ -232,15 +332,45 @@ function nextSessionId(){
 
 /* ================= ALLENAMENTO ================= */
 function newDraft(sessionId){
+  rirOpen = null;
   const s = db.program.sessions.find(x => x.id === sessionId);
   db.draft = {
     sessionId, name: s.name, started: new Date().toISOString(),
     exercises: s.exercises.map(ex => {
       const sg = suggest(ex);
-      return { name: ex.name, sets: Array.from({length: ex.sets}, () => ({ kg: sg.kg, reps: null, done: false })) };
+      return { name: ex.name, sets: Array.from({length: ex.sets}, () => ({ kg: sg.kg, reps: null, done: false, rir: null })) };
     })
   };
   save();
+}
+
+/* RIR: fila di chip sotto la serie appena spuntata. Facoltativa: si chiude da sola alla scelta.
+   Il numero della serie (a sinistra) mostra il RIR scelto e la riapre per correggerlo. */
+let rirOpen = null; // { ei, si }
+const nLabel = (si, s) => `${si+1}${s.done && s.rir != null ? `<span class="r">@${rirLabel(s.rir)}</span>` : ""}`;
+const rirRow = (si, cur) => `<div class="rirrow" data-si="${si}"><span class="small muted">RIR</span>${
+  [0,1,2,3].map(v => `<button class="chip ${cur === v ? "on" : ""}" data-act="rirv" data-v="${v}">${rirLabel(v)}</button>`).join("")}</div>`;
+function closeRir(){ rirOpen = null; $("#view").querySelectorAll(".rirrow").forEach(r => r.remove()); }
+function openRir(card, ei, si){
+  closeRir(); rirOpen = { ei, si };
+  card.querySelector(`.set[data-si="${si}"]`).insertAdjacentHTML("afterend", rirRow(si, db.draft.exercises[ei].sets[si].rir ?? null));
+}
+
+/* Promemoria backup: log non vuoto e nessun export negli ultimi 14 giorni */
+function backupBanner(){
+  if(!db.log.length) return "";
+  const days = db.lastBackup ? Math.floor((Date.now() - new Date(db.lastBackup)) / 864e5) : null;
+  if(days != null && days <= 14) return "";
+  const txt = days == null ? "Backup mai fatto" : `Backup non fatto da ${days} giorni`;
+  return `<div class="card bkban"><div><b>${txt}</b><div class="small">${db.log.length} allenamenti solo su questo telefono.</div></div>
+    <button class="btn primary" data-backup>Esporta</button></div>`;
+}
+function exportBackup(){
+  db.lastBackup = new Date().toISOString(); save();
+  const blob = new Blob([JSON.stringify(db, null, 2)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = `pesi-backup-${new Date().toISOString().slice(0,10)}.json`; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000); render();
 }
 
 let selectedSession = null;
@@ -252,19 +382,20 @@ function viewOggi(){
     $("#subtitle").textContent = db.log.length ? `Ultimo: ${db.log.at(-1).name}, ${fmtDate(db.log.at(-1).date)}` : "Nessun allenamento registrato";
     $("#hdrAction").innerHTML = "";
     const s = sessions.find(x => x.id === next);
-    $("#view").innerHTML = `
+    $("#view").innerHTML = backupBanner() + `
       <div class="muted small">Seduta da fare (in coda: ${esc(sessions.find(x=>x.id===nextSessionId()).name)})</div>
       <div class="chips">${sessions.map(x => `<button class="chip ${x.id===next?"on":""}" data-pick="${x.id}">${esc(x.name)}</button>`).join("")}</div>
       <div class="card">
         ${s.exercises.map(ex => { const sg = suggest(ex); return `
           <div style="padding:8px 0;border-bottom:1px solid var(--line)">
             <div style="font-weight:600">${esc(ex.name)}</div>
-            <div class="small muted">${ex.sets} × ${esc(ex.reps)} · rec ${ex.rest}"</div>
+            <div class="small muted">${ex.sets} × ${esc(ex.reps)}${ex.rir ? ` · RIR ${esc(ex.rir)}` : ""} · rec ${ex.rest}"</div>
             <div class="small" style="color:${sg.up?"var(--ok)":"#f2d27a"}">${esc(sg.text)}</div>
           </div>`; }).join("")}
       </div>
       <button class="btn primary block" id="start">Inizia ${esc(s.name)}</button>`;
     $("#view").querySelectorAll("[data-pick]").forEach(b => b.onclick = () => { selectedSession = b.dataset.pick; render(); });
+    const bk = $("#view").querySelector("[data-backup]"); if(bk) bk.onclick = exportBackup;
     $("#start").onclick = () => { newDraft(next); selectedSession = null; render(); window.scrollTo(0,0); };
     return;
   }
@@ -282,19 +413,19 @@ function viewOggi(){
     const sg = suggest(p.name ? p : { ...p, name: e.name, sets: e.sets.length });
     return `<div class="card ex" data-ei="${ei}">
       <h3>${esc(e.name)}</h3>
-      <div class="meta">${e.sets.length} × ${esc(p.reps)} · recupero ${p.rest}"</div>
+      <div class="meta">${e.sets.length} × ${esc(p.reps)}${p.rir ? ` · RIR ${esc(p.rir)}` : ""} · recupero ${p.rest}"</div>
       ${p.note ? `<div class="note">${esc(p.note)}</div>` : ""}
       <div class="sugg ${sg.up?"up":""}">${esc(sg.text)}</div>
       <div class="set" style="margin-bottom:0"><div></div><div class="unit">kg</div><div class="unit">rip.</div><div></div></div>
       ${e.sets.map((s, si) => `
         <div class="set ${s.done?"done":""}" data-si="${si}">
-          <div class="n">${si+1}</div>
+          <button class="n" data-act="rir" aria-label="RIR serie ${si+1}">${nLabel(si, s)}</button>
           <div class="kg"><button data-act="minus">−</button>
             <input inputmode="decimal" data-f="kg" value="${fmtKg(s.kg)}" placeholder="–">
             <button data-act="plus">+</button></div>
           <div class="reps"><input inputmode="numeric" data-f="reps" value="${s.reps ?? ""}" placeholder="${range(p.reps)[1]||""}"></div>
           <button class="check" data-act="done">✓</button>
-        </div>`).join("")}
+        </div>${s.done && rirOpen && rirOpen.ei === ei && rirOpen.si === si ? rirRow(si, s.rir) : ""}`).join("")}
       <div class="addset"><button class="btn small" data-act="add">+ serie</button>${e.sets.length>1?`<button class="btn small" data-act="del">− serie</button>`:""}</div>
     </div>`;
   }).join("") + `<button class="btn primary block" id="finish">Termina e salva</button>
@@ -312,7 +443,7 @@ function viewOggi(){
     });
     card.addEventListener("click", ev => {
       const b = ev.target.closest("[data-act]"); if(!b) return;
-      const act = b.dataset.act, row = b.closest(".set"), si = row ? +row.dataset.si : -1;
+      const act = b.dataset.act, row = b.closest(".set, .rirrow"), si = row ? +row.dataset.si : -1;
       if(act === "minus" || act === "plus"){
         const cur = e.sets[si].kg ?? 0;
         e.sets[si].kg = Math.round((cur + (act==="plus"?stepKg:-stepKg))*100)/100;
@@ -328,11 +459,21 @@ function viewOggi(){
         }
         s.done = !s.done;
         row.classList.toggle("done", s.done);
+        row.querySelector(".n").innerHTML = nLabel(si, s);
+        if(s.done) openRir(card, ei, si); else if(rirOpen && rirOpen.ei === ei && rirOpen.si === si) closeRir();
         if(s.done){
           for(let j = si+1; j < e.sets.length; j++) if(!e.sets[j].done && e.sets[j].kg == null){ e.sets[j].kg = s.kg; card.querySelector(`.set[data-si="${j}"] [data-f="kg"]`).value = fmtKg(s.kg); }
           startTimer(p.rest || 90);
         }
         save(); updateSubtitle();
+      } else if(act === "rir"){
+        if(!e.sets[si].done) return;
+        if(rirOpen && rirOpen.ei === ei && rirOpen.si === si) closeRir(); else openRir(card, ei, si);
+      } else if(act === "rirv"){
+        const s = e.sets[si], v = +b.dataset.v;
+        s.rir = s.rir === v ? null : v; // un secondo tap sullo stesso valore lo toglie
+        card.querySelector(`.set[data-si="${si}"] .n`).innerHTML = nLabel(si, s);
+        closeRir(); save();
       } else if(act === "add"){
         const lastSet = e.sets.at(-1); e.sets.push({ kg: lastSet ? lastSet.kg : null, reps: null, done: false }); save(); render();
       } else if(act === "del"){
@@ -380,7 +521,7 @@ function viewStorico(){
     const vol = w.exercises.reduce((a,e)=>a+e.sets.reduce((b,s)=>b+(s.kg>0?s.kg:0)*(s.reps||0),0),0);
     const mins = w.started ? Math.round((new Date(w.date)-new Date(w.started))/60000) : null;
     return `<details class="hist-item"><summary><span class="d">${esc(w.name)}</span> · <span class="muted">${fmtDate(w.date)}${mins?` · ${mins} min`:""} · ${Math.round(vol)} kg tot</span></summary>
-      <table class="tbl" style="margin-top:8px">${w.exercises.map(e => `<tr><td>${esc(e.name)}</td><td style="white-space:nowrap">${e.sets.map(s=>`${fmtKg(s.kg)}×${s.reps}`).join("<br>")}</td></tr>`).join("")}</table>
+      <table class="tbl" style="margin-top:8px">${w.exercises.map(e => `<tr><td>${esc(e.name)}</td><td style="white-space:nowrap">${e.sets.map(fmtSet).join("<br>")}</td></tr>`).join("")}</table>
       <button class="btn small" data-del="${w.id}" style="margin-top:8px">Elimina</button></details>`;
   }).join("")}</div>`;
   $("#view").querySelectorAll("[data-del]").forEach(b => b.onclick = () => {
@@ -394,13 +535,15 @@ function viewEsercizi(){
   $("#title").textContent = "Progressi"; $("#hdrAction").innerHTML = "";
   const names = [...new Set(db.log.flatMap(w => w.exercises.map(e => e.name)))];
   $("#subtitle").textContent = `${names.length} esercizi registrati`;
-  if(!names.length){ $("#view").innerHTML = `<div class="empty">Qui vedrai l'andamento di ogni esercizio dopo il primo allenamento.</div>`; return; }
-  if(!selEx || !names.includes(selEx)) selEx = names[0];
-  const pts = db.log.flatMap(w => { const e = w.exercises.find(x => x.name === selEx); if(!e) return [];
-    const best = e.sets.reduce((b,s) => { const v = e1rm(s.kg||0, s.reps||0); return v > b.v ? { v, s } : b; }, { v:-Infinity, s:null });
-    return [{ date: w.date, top: Math.max(...e.sets.map(s=>s.kg||0)), e1: best.v, sets: e.sets }]; });
-  const pr = pts.reduce((m,p) => p.e1 > m.e1 ? p : m, pts[0]);
-  $("#view").innerHTML = `
+  let exHtml;
+  if(!names.length) exHtml = `<div class="empty">Qui vedrai l'andamento di ogni esercizio dopo il primo allenamento.</div>`;
+  else {
+    if(!selEx || !names.includes(selEx)) selEx = names[0];
+    const pts = db.log.flatMap(w => { const e = w.exercises.find(x => x.name === selEx); if(!e) return [];
+      const best = e.sets.reduce((b,s) => { const v = e1rm(s.kg||0, s.reps||0); return v > b.v ? { v, s } : b; }, { v:-Infinity, s:null });
+      return [{ date: w.date, top: Math.max(...e.sets.map(s=>s.kg||0)), e1: best.v, sets: e.sets }]; });
+    const pr = pts.reduce((m,p) => p.e1 > m.e1 ? p : m, pts[0]);
+    exHtml = `
     <select id="exSel">${names.map(n => `<option ${n===selEx?"selected":""}>${esc(n)}</option>`).join("")}</select>
     <div class="card" style="margin-top:12px">
       <div class="row" style="justify-content:space-between"><div><div class="small muted">Carico massimo</div><div style="font-size:22px;font-weight:700">${fmtKg(Math.max(...pts.map(p=>p.top)))} kg</div></div>
@@ -409,8 +552,125 @@ function viewEsercizi(){
       <div class="small muted">Linea: carico più alto di ogni seduta · punti gialli: 1RM stimato</div>
     </div>
     <div class="card"><table class="tbl"><tr><th>Data</th><th>Serie</th></tr>
-      ${pts.slice().reverse().map(p => `<tr><td style="white-space:nowrap">${fmtDate(p.date)}</td><td>${p.sets.map(s=>`${fmtKg(s.kg)}×${s.reps}`).join(" · ")}</td></tr>`).join("")}</table></div>`;
-  $("#exSel").onchange = ev => { selEx = ev.target.value; render(); };
+      ${pts.slice().reverse().map(p => `<tr><td style="white-space:nowrap">${fmtDate(p.date)}</td><td>${p.sets.map(fmtSet).join(" · ")}</td></tr>`).join("")}</table></div>`;
+  }
+  $("#view").innerHTML = `<h2 style="margin-top:4px">Peso corporeo</h2>${bodyweightHtml()}
+    <h2>Volume settimanale</h2>${volumeHtml()}
+    <h2>Esercizi</h2>${exHtml}`;
+  if($("#exSel")) $("#exSel").onchange = ev => { selEx = ev.target.value; render(); };
+  bindBodyweight();
+}
+
+/* ---- Peso corporeo: una misura al giorno, db.bodyweight = [{ date:"YYYY-MM-DD", kg }] ---- */
+function bwAvg(from, to){
+  const xs = db.bodyweight.filter(b => b.date >= from && b.date <= to).map(b => b.kg);
+  return xs.length ? xs.reduce((a,b) => a+b, 0) / xs.length : null;
+}
+function bwStats(){
+  const t = dayKey(new Date());
+  const cur = bwAvg(keyAdd(t, -6), t), prev = bwAvg(keyAdd(t, -13), keyAdd(t, -7));
+  const diff = cur != null && prev != null ? cur - prev : null;
+  return { cur, prev, diff, pct: diff != null ? diff / prev * 100 : null };
+}
+function bodyweightHtml(){
+  const bw = db.bodyweight, t = dayKey(new Date());
+  const today = bw.find(b => b.date === t), st = bwStats();
+  const sign = n => (n > 0 ? "+" : n < 0 ? "−" : "±") + fmtKg(Math.abs(Math.round(n*100)/100));
+  return `<div class="card">
+    <div class="row"><input class="bwin" id="bwIn" inputmode="decimal" placeholder="${bw.length ? fmtKg(bw.at(-1).kg) : "kg"}" aria-label="Peso in kg">
+      <button class="btn primary bwbtn" id="bwSave">Salva</button></div>
+    <div class="small muted" style="margin-top:6px">${today ? `Oggi: ${fmtKg(today.kg)} kg (salvare di nuovo la sostituisce)` : "Una misura al giorno, meglio al mattino a digiuno."}</div>
+    ${bw.length ? `<div class="row" style="justify-content:space-between;margin-top:12px">
+      <div><div class="small muted">Media 7 giorni</div><div style="font-size:22px;font-weight:700" id="bwAvg">${st.cur != null ? fmt1(st.cur) + " kg" : "–"}</div></div>
+      <div style="text-align:right"><div class="small muted">vs 7 giorni prima</div><div style="font-size:18px;font-weight:700" id="bwDiff">${st.diff != null
+        ? `${sign(Math.round(st.diff*10)/10)} kg <span class="small muted">(${sign(Math.round(st.pct*10)/10)}%)</span>` : "–"}</div></div></div>
+      ${bwChart()}
+      <details class="bwlist"><summary class="small muted">Misure (${bw.length})</summary>
+        ${bw.slice().reverse().map(b => `<div class="row bwrow"><span>${fmtDate(keyDate(b.date))}</span><b>${fmtKg(b.kg)} kg</b>
+          <button class="btn" data-bwdel="${b.date}">Elimina</button></div>`).join("")}</details>` : ""}
+  </div>`;
+}
+function bwChart(){
+  const bw = db.bodyweight;
+  if(bw.length < 2) return `<div class="small muted" style="padding:12px 0 4px">Serve almeno una seconda misura per il grafico.</div>`;
+  const W = 600, H = 120, P = 10, d0 = bw[0].date, days = keyDiff(bw.at(-1).date, d0) || 1;
+  const ma = bw.map(b => bwAvg(keyAdd(b.date, -6), b.date)); // media mobile a 7 giorni
+  const vals = bw.map(b => b.kg).concat(ma);
+  const min = Math.min(...vals), max = Math.max(...vals), span = (max - min) || 1;
+  const x = k => P + keyDiff(k, d0) * (W - 2*P) / days, y = v => H - P - (v - min) * (H - 2*P) / span;
+  const line = bw.map((b,i) => `${i?"L":"M"}${x(b.date).toFixed(1)},${y(ma[i]).toFixed(1)}`).join(" ");
+  // punti come segmenti a lunghezza zero: restano tondi anche con preserveAspectRatio="none"
+  const dots = bw.map(b => `M${x(b.date).toFixed(1)},${y(b.kg).toFixed(1)}h0`).join(" ");
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    <path d="${dots}" stroke="#e8b423" stroke-width="7" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+    <path d="${line}" fill="none" stroke="#eef0f3" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>
+    <div class="small muted">Punti gialli: misure · linea: media mobile 7 giorni</div>`;
+}
+function bindBodyweight(){
+  const inp = $("#bwIn"); if(!inp) return;
+  const doSave = () => {
+    const kg = parseNum(inp.value);
+    if(kg == null || kg <= 20 || kg >= 400){ toast("Peso non valido"); return; }
+    const t = dayKey(new Date());
+    db.bodyweight = db.bodyweight.filter(b => b.date !== t).concat({ date: t, kg })
+      .sort((a,b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
+    save(); toast("Peso salvato"); render();
+  };
+  $("#bwSave").onclick = doSave;
+  inp.onkeydown = ev => { if(ev.key === "Enter") doSave(); };
+  $("#view").querySelectorAll("[data-bwdel]").forEach(b => b.onclick = () => {
+    if(confirm(`Eliminare la misura del ${fmtDate(keyDate(b.dataset.bwdel))}?`)){
+      db.bodyweight = db.bodyweight.filter(x => x.date !== b.dataset.bwdel); save(); render();
+    }
+  });
+}
+
+/* ---- Volume: serie frazionarie per muscolo (diretto 1, indiretto 0,5) ----
+   Numero principale = media settimanale sugli ultimi 28 giorni. Con meno di 28 giorni di storico
+   si normalizza sui giorni effettivi (minimo 7); sotto i 14 giorni è una "stima". */
+function weeklyVolume(){
+  if(!db.log.length) return null;
+  const byName = new Map();
+  for(const s of db.program.sessions) for(const ex of s.exercises) if(!byName.has(ex.name)) byName.set(ex.name, ex);
+  const t = dayKey(new Date()), from28 = keyAdd(t, -27), from7 = keyAdd(t, -6);
+  const rows = new Map(), unmapped = { d28: 0, d7: 0, names: new Set() };
+  const row = m => { if(!rows.has(m)) rows.set(m, { m, d28: 0, d7: 0 }); return rows.get(m); };
+  for(const ex of byName.values()) if(ex.muscles) [...(ex.muscles.direct||[]), ...(ex.muscles.indirect||[])].forEach(row);
+  for(const w of db.log){
+    const k = dayKey(w.date); if(k < from28 || k > t) continue;
+    const in7 = k >= from7;
+    for(const e of w.exercises){
+      const n = e.sets.filter(s => s.done !== false).length; if(!n) continue;
+      const m = byName.get(e.name)?.muscles;
+      const dir = m?.direct || [], ind = m?.indirect || [];
+      if(!dir.length && !ind.length){ unmapped.d28 += n; if(in7) unmapped.d7 += n; unmapped.names.add(e.name); continue; }
+      for(const [list, f] of [[dir, 1], [ind, 0.5]]) for(const mu of list){ const r = row(mu); r.d28 += n*f; if(in7) r.d7 += n*f; }
+    }
+  }
+  const first = db.log.reduce((a, w) => { const k = dayKey(w.date); return k < a ? k : a; }, t);
+  const spanDays = keyDiff(t, first) + 1;
+  const div = Math.min(28, Math.max(7, spanDays)) / 7; // settimane su cui normalizzare
+  const out = [...rows.values()].map(r => ({ ...r, week: r.d28 / div })).sort((a,b) => a.week - b.week || a.m.localeCompare(b.m));
+  return { rows: out, unmapped, spanDays, estimate: spanDays < 14, weeks: div, unmappedWeek: unmapped.d28 / div };
+}
+function volumeHtml(){
+  const v = weeklyVolume();
+  if(!v) return `<div class="card small muted">Il volume per muscolo comparirà dopo il primo allenamento.</div>`;
+  const max = Math.max(25, ...v.rows.map(r => r.week));
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const head = v.spanDays >= 28 ? "Serie a settimana, media delle ultime 4 settimane"
+    : `${v.estimate ? "<b>Stima</b>: " : ""}serie a settimana su ${v.spanDays} ${v.spanDays === 1 ? "giorno" : "giorni"} di dati`;
+  return `<div class="card">
+    <div class="small muted" style="margin-bottom:8px">${head} · in piccolo gli ultimi 7 giorni</div>
+    ${v.rows.map(r => { const b = r.week < 10 ? ["lo","basso"] : r.week > 20 ? ["hi","alto"] : ["ok","ok"]; return `
+      <div class="vol" data-muscle="${esc(r.m)}">
+        <div class="vol-h"><span>${esc(cap(r.m))}</span><span><b class="vw">${fmt1(r.week)}</b> <span class="small muted">· 7 gg ${fmt1(r.d7)}</span> <span class="band ${b[0]}">${b[1]}</span></span></div>
+        <div class="bar"><i class="${b[0]}" style="width:${(r.week/max*100).toFixed(1)}%"></i><s style="left:${(10/max*100).toFixed(1)}%"></s><s style="left:${(20/max*100).toFixed(1)}%"></s></div>
+      </div>`; }).join("")}
+    ${v.unmapped.d28 ? `<div class="vol" data-muscle="non mappati"><div class="vol-h"><span class="muted">Non mappati</span><span><b class="vw">${fmt1(v.unmappedWeek)}</b> <span class="small muted">· 7 gg ${fmt1(v.unmapped.d7)}</span></span></div>
+      <div class="small muted">${[...v.unmapped.names].map(esc).join(", ")}: aggiungi <b>muscles</b> nella scheda per contarli.</div></div>` : ""}
+    <div class="small muted" style="margin-top:8px">Diretti 1 serie, indiretti 0,5 · sotto 10 basso, 10–20 ok, sopra 20 alto.</div>
+  </div>`;
 }
 function spark(pts){
   if(pts.length < 2) return `<div class="small muted" style="padding:16px 0">Serve almeno un secondo allenamento per il grafico.</div>`;
@@ -437,24 +697,18 @@ function viewImpostazioni(){
     </div>
     <h2>Modifica scheda</h2>
     <div class="card">
-      <p class="small muted" style="margin-top:0">JSON della scheda. Campi per esercizio: <b>name</b>, <b>sets</b>, <b>reps</b> ("8-10"), <b>rest</b> (secondi), <b>step</b> (kg da aggiungere quando chiudi il range), <b>start</b> (carico iniziale, facoltativo), <b>note</b>. Lo storico è legato al <b>nome</b>: se rinomini un esercizio, il suo storico non lo segue.</p>
+      <p class="small muted" style="margin-top:0">JSON della scheda. Campi per esercizio: <b>name</b>, <b>sets</b>, <b>reps</b> ("8-10"), <b>rest</b> (secondi), <b>step</b> (kg da aggiungere quando chiudi il range), <b>start</b> (carico iniziale, facoltativo), <b>note</b>, <b>rir</b> (obiettivo di ripetizioni di riserva, es. "1-2"), <b>muscles</b> (<code>{"direct":[…],"indirect":[…]}</code>, per il volume settimanale: diretti contano 1 serie, indiretti 0,5). Lo storico è legato al <b>nome</b>: se rinomini un esercizio, il suo storico non lo segue.</p>
       <textarea id="prog" spellcheck="false">${esc(JSON.stringify(db.program, null, 2))}</textarea>
       <div class="row" style="margin-top:8px"><button class="btn primary" id="saveProg">Salva scheda</button><button class="btn" id="resetProg">Ripristina originale</button></div>
     </div>`;
-  $("#exp").onclick = () => {
-    db.lastBackup = new Date().toISOString(); save();
-    const blob = new Blob([JSON.stringify(db, null, 2)], { type: "application/json" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
-    a.download = `pesi-backup-${new Date().toISOString().slice(0,10)}.json`; a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 2000); render();
-  };
+  $("#exp").onclick = exportBackup;
   $("#imp").onclick = () => $("#impFile").click();
   $("#impFile").onchange = async ev => {
     const f = ev.target.files[0]; if(!f) return;
     try{ const d = JSON.parse(await f.text());
       if(!d.program || !Array.isArray(d.log)) throw new Error("file non valido");
       if(!confirm(`Sostituire i dati attuali con il backup (${d.log.length} allenamenti)?`)) return;
-      db = d; save(); toast("Backup importato"); render();
+      db = migrate(d); save(); toast("Backup importato"); render();
     }catch(e){ toast("Import fallito: " + e.message); }
   };
   $("#saveProg").onclick = () => {
